@@ -34,13 +34,17 @@ export function useGame() {
     [state.status, stuck],
   );
 
+  const playHandIndexOnStack = useCallback((handIndex: number, stackId: PlayStackId) => {
+    dispatch({ type: "PLAY_FROM_HAND", handIndex, stackId });
+    setSelectedHandIndex(null);
+  }, []);
+
   const playOnStack = useCallback(
     (stackId: PlayStackId) => {
       if (selectedHandIndex === null) return;
-      dispatch({ type: "PLAY_FROM_HAND", handIndex: selectedHandIndex, stackId });
-      setSelectedHandIndex(null);
+      playHandIndexOnStack(selectedHandIndex, stackId);
     },
-    [selectedHandIndex],
+    [selectedHandIndex, playHandIndexOnStack],
   );
 
   const pullOnStack = useCallback((stackId: PlayStackId) => {
@@ -58,6 +62,7 @@ export function useGame() {
     stuck,
     selectHandCard,
     playOnStack,
+    playHandIndexOnStack,
     pullOnStack,
     newGame,
   };

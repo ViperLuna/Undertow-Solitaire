@@ -1,19 +1,14 @@
-import type { GameStatus } from "../game/types";
 import type { ScoreBreakdown } from "../game/scoring";
 
 interface GameOverOverlayProps {
-  status: GameStatus;
+  won: boolean;
   movesMade: number;
   cardsPulled: number;
   score: ScoreBreakdown;
-  onNewGame: () => void;
+  onBackToMenu: () => void;
 }
 
-export function GameOverOverlay({ status, movesMade, cardsPulled, score, onNewGame }: GameOverOverlayProps) {
-  if (status === "playing") return null;
-
-  const won = status === "won";
-
+export function GameOverOverlay({ won, movesMade, cardsPulled, score, onBackToMenu }: GameOverOverlayProps) {
   return (
     <div className="overlay">
       <div className="overlay__panel">
@@ -26,8 +21,8 @@ export function GameOverOverlay({ status, movesMade, cardsPulled, score, onNewGa
         <p className="overlay__score-breakdown">
           {score.playPoints} for plays + {score.reservePoints} reserve bonus
         </p>
-        <button type="button" onClick={onNewGame}>
-          Play Again
+        <button type="button" onClick={onBackToMenu}>
+          Back to Menu
         </button>
       </div>
     </div>

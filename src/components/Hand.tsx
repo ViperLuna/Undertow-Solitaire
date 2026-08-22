@@ -5,11 +5,22 @@ import type { GameState } from "../game/types";
 interface HandProps {
   state: GameState;
   selectedHandIndex: number | null;
+  draggingHandIndex: number | null;
   stuck: boolean;
   onSelect: (index: number) => void;
+  onDragStart: (index: number) => void;
+  onDragEnd: () => void;
 }
 
-export function Hand({ state, selectedHandIndex, stuck, onSelect }: HandProps) {
+export function Hand({
+  state,
+  selectedHandIndex,
+  draggingHandIndex,
+  stuck,
+  onSelect,
+  onDragStart,
+  onDragEnd,
+}: HandProps) {
   return (
     <div className="hand">
       {state.hand.map((card, index) => {
@@ -24,8 +35,12 @@ export function Hand({ state, selectedHandIndex, stuck, onSelect }: HandProps) {
             key={card.id}
             card={card}
             selected={selectedHandIndex === index}
+            dragging={draggingHandIndex === index}
             disabled={disabled}
+            draggable={!disabled}
             onClick={disabled ? undefined : () => onSelect(index)}
+            onDragStart={disabled ? undefined : () => onDragStart(index)}
+            onDragEnd={onDragEnd}
           />
         );
       })}

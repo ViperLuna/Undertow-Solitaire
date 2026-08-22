@@ -6,10 +6,24 @@ interface CardFaceProps {
   size?: "normal" | "small";
   selected?: boolean;
   disabled?: boolean;
+  dragging?: boolean;
+  draggable?: boolean;
   onClick?: () => void;
+  onDragStart?: () => void;
+  onDragEnd?: () => void;
 }
 
-export function CardFace({ card, size = "normal", selected, disabled, onClick }: CardFaceProps) {
+export function CardFace({
+  card,
+  size = "normal",
+  selected,
+  disabled,
+  dragging,
+  draggable,
+  onClick,
+  onDragStart,
+  onDragEnd,
+}: CardFaceProps) {
   const red = isRedSuit(card.suit);
   const classes = [
     "card",
@@ -17,13 +31,24 @@ export function CardFace({ card, size = "normal", selected, disabled, onClick }:
     red ? "card--red" : "card--black",
     selected ? "card--selected" : "",
     disabled ? "card--disabled" : "",
+    dragging ? "card--dragging" : "",
     onClick ? "card--clickable" : "",
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
-    <div className={classes} onClick={onClick}>
+    <div
+      className={classes}
+      onClick={onClick}
+      draggable={draggable}
+      onDragStart={(event) => {
+        event.dataTransfer.setData("text/plain", card.id);
+        event.dataTransfer.effectAllowed = "move";
+        onDragStart?.();
+      }}
+      onDragEnd={onDragEnd}
+    >
       <span className="card__corner card__corner--top">
         {rankLabel(card.rank)}
         <br />
