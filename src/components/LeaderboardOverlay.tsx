@@ -29,6 +29,7 @@ export function LeaderboardOverlay({ entries, lastRecordedId, onClose, onClear }
             <thead>
               <tr>
                 <th>#</th>
+                <th>Name</th>
                 <th>Score</th>
                 <th>Result</th>
                 <th>Plays</th>
@@ -43,6 +44,7 @@ export function LeaderboardOverlay({ entries, lastRecordedId, onClose, onClear }
                   className={entry.id === lastRecordedId ? "leaderboard-table__row--latest" : undefined}
                 >
                   <td>{index + 1}</td>
+                  <td>{entry.name}</td>
                   <td>{entry.score}</td>
                   <td className={entry.won ? "leaderboard-table__win" : "leaderboard-table__loss"}>
                     {entry.won ? "Win" : "Loss"}
