@@ -3,6 +3,7 @@ import { Hand } from "./components/Hand";
 import { PlayStackView } from "./components/PlayStackView";
 import { ReserveStack } from "./components/ReserveStack";
 import { GameOverOverlay } from "./components/GameOverOverlay";
+import { HowToPlayOverlay } from "./components/HowToPlayOverlay";
 import { LeaderboardNameEntry } from "./components/LeaderboardNameEntry";
 import { LeaderboardOverlay } from "./components/LeaderboardOverlay";
 import { MainMenu } from "./components/MainMenu";
@@ -36,6 +37,7 @@ function App() {
 
   const [screen, setScreen] = useState<Screen>("menu");
   const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [dragHandIndex, setDragHandIndex] = useState<number | null>(null);
   const [pendingResult, setPendingResult] = useState<PendingResult | null>(null);
   const resolvedStateRef = useRef<GameState | null>(null);
@@ -107,11 +109,18 @@ function App() {
     />
   );
 
+  const howToPlayOverlay = showHowToPlay && <HowToPlayOverlay onClose={() => setShowHowToPlay(false)} />;
+
   if (screen === "menu") {
     return (
       <div className="app">
-        <MainMenu onPlay={handlePlay} onShowLeaderboard={() => setShowLeaderboard(true)} />
+        <MainMenu
+          onPlay={handlePlay}
+          onShowLeaderboard={() => setShowLeaderboard(true)}
+          onShowHowToPlay={() => setShowHowToPlay(true)}
+        />
         {leaderboardOverlay}
+        {howToPlayOverlay}
       </div>
     );
   }
@@ -121,6 +130,9 @@ function App() {
       <header className="app__header">
         <h1>Undertow Solitaire</h1>
         <div className="app__header-actions">
+          <button type="button" className="app__secondary-btn" onClick={() => setShowHowToPlay(true)}>
+            How to Play
+          </button>
           <button type="button" className="app__secondary-btn" onClick={() => setShowLeaderboard(true)}>
             Leaderboard
           </button>
@@ -196,6 +208,7 @@ function App() {
         ))}
 
       {leaderboardOverlay}
+      {howToPlayOverlay}
     </div>
   );
 }

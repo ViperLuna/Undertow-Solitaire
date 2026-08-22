@@ -442,6 +442,53 @@ body {
   border-color: var(--current-bright);
 }
 
+.how-to-play {
+  text-align: left;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.how-to-play h2 {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.how-to-play__body {
+  overflow-y: auto;
+  padding-right: 0.6rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--current-bright) transparent;
+}
+
+.how-to-play__body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.how-to-play__body::-webkit-scrollbar-thumb {
+  background: var(--current-bright);
+  border-radius: 4px;
+}
+
+.how-to-play h3 {
+  color: var(--gold);
+  font-size: 1rem;
+  margin: 1.1rem 0 0.35rem;
+  letter-spacing: 0.03em;
+}
+
+.how-to-play p {
+  margin: 0 0 0.5rem;
+  color: var(--ink);
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.how-to-play .overlay__actions {
+  margin-top: 1rem;
+  flex-shrink: 0;
+}
+
 .leaderboard-table {
   width: 100%;
   border-collapse: collapse;
