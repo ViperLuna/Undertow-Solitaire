@@ -46,6 +46,34 @@ body {
   gap: 1.25rem;
 }
 
+.max-score-badge {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  padding: 0.5rem 0.85rem;
+  background: rgba(4, 28, 38, 0.7);
+  border: 1px solid rgba(232, 196, 104, 0.4);
+  border-radius: 10px;
+  z-index: 5;
+}
+
+.max-score-badge__label {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.max-score-badge__value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--gold);
+}
+
 .app__header {
   width: 100%;
   max-width: 900px;

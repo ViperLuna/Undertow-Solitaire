@@ -9,7 +9,7 @@ import { LeaderboardNameEntry } from "./components/LeaderboardNameEntry";
 import { LeaderboardOverlay } from "./components/LeaderboardOverlay";
 import { MainMenu } from "./components/MainMenu";
 import { canPlayCardOnStack } from "./game/engine";
-import { calculateScore, type ScoreBreakdown } from "./game/scoring";
+import { calculateMaxAchievableScore, calculateScore, type ScoreBreakdown } from "./game/scoring";
 import { useCardDrag } from "./game/useCardDrag";
 import { useGame } from "./game/useGame";
 import { useLeaderboard } from "./game/useLeaderboard";
@@ -92,6 +92,7 @@ function App() {
   const draggedCard = draggingIndex !== null ? state.hand[draggingIndex] : null;
   const activeCard = draggedCard ?? selectedCard;
   const liveScore = calculateScore(state);
+  const maxAchievableScore = calculateMaxAchievableScore(state);
 
   const handleStackClick = (stackId: PlayStackId) => {
     if (stuck) {
@@ -130,6 +131,11 @@ function App() {
 
   return (
     <div className="app">
+      <div className="max-score-badge">
+        <span className="max-score-badge__label">Max Score</span>
+        <span className="max-score-badge__value">{maxAchievableScore}</span>
+      </div>
+
       <header className="app__header">
         <h1>Undertow Solitaire</h1>
         <div className="app__header-actions">
