@@ -169,8 +169,7 @@ body {
 }
 
 .play-stack--drag-invalid {
-  filter: grayscale(0.85);
-  opacity: 0.4;
+  opacity: 0.35;
 }
 
 .play-stack__count {

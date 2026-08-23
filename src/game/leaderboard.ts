@@ -36,8 +36,19 @@ export async function addLeaderboardEntry(entry: Omit<LeaderboardEntry, "id">): 
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readwrite");
     const request = tx.objectStore(STORE_NAME).add(entry);
-    request.onsuccess = () => resolve(request.result as number);
-    tx.onerror = () => reject(tx.error);
+    let insertedId = -1;
+    request.onsuccess = () => {
+      insertedId = request.result as number;
+    };
+    request.onerror = () => reject(request.error);
+    tx.oncomplete = () => {
+      db.close();
+      resolve(insertedId);
+    };
+    tx.onerror = () => {
+      db.close();
+      reject(tx.error);
+    };
   });
 }
 
@@ -54,11 +65,17 @@ export async function getTopLeaderboardEntries(limit: number): Promise<Leaderboa
       if (cursor && results.length < limit) {
         results.push(cursor.value as LeaderboardEntry);
         cursor.continue();
-      } else {
-        resolve(results);
       }
     };
     request.onerror = () => reject(request.error);
+    tx.oncomplete = () => {
+      db.close();
+      resolve(results);
+    };
+    tx.onerror = () => {
+      db.close();
+      reject(tx.error);
+    };
   });
 }
 
@@ -81,8 +98,14 @@ export async function trimLeaderboard(limit: number): Promise<void> {
       cursor.continue();
     };
     request.onerror = () => reject(request.error);
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
+    tx.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+    tx.onerror = () => {
+      db.close();
+      reject(tx.error);
+    };
   });
 }
 
@@ -91,7 +114,13 @@ export async function clearLeaderboard(): Promise<void> {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readwrite");
     tx.objectStore(STORE_NAME).clear();
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error);
+    tx.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+    tx.onerror = () => {
+      db.close();
+      reject(tx.error);
+    };
   });
 }

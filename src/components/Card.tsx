@@ -43,8 +43,10 @@ export function CardFace({
       onClick={onClick}
       draggable={draggable}
       onDragStart={(event) => {
-        event.dataTransfer.setData("text/plain", card.id);
-        event.dataTransfer.effectAllowed = "move";
+        if (event.dataTransfer) {
+          event.dataTransfer.setData("text/plain", card.id);
+          event.dataTransfer.effectAllowed = "move";
+        }
         onDragStart?.();
       }}
       onDragEnd={onDragEnd}
