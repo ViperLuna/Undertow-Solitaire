@@ -9,17 +9,16 @@ interface PlayStackViewProps {
   dragActive: boolean;
   dragAcceptable: boolean;
   onClick: () => void;
-  onDropCard: () => void;
 }
 
 export function PlayStackView({
+  stackId,
   cards,
   playable,
   pullTarget,
   dragActive,
   dragAcceptable,
   onClick,
-  onDropCard,
 }: PlayStackViewProps) {
   const top = cards[cards.length - 1];
   const clickable = playable || pullTarget;
@@ -27,6 +26,7 @@ export function PlayStackView({
 
   return (
     <div
+      data-stack-id={stackId}
       className={[
         "play-stack",
         playable ? "play-stack--playable" : "",
@@ -36,13 +36,6 @@ export function PlayStackView({
         .filter(Boolean)
         .join(" ")}
       onClick={clickable ? onClick : undefined}
-      onDragOver={(event) => {
-        if (dragAcceptable) event.preventDefault();
-      }}
-      onDrop={(event) => {
-        event.preventDefault();
-        if (dragAcceptable) onDropCard();
-      }}
     >
       {top ? <CardFace card={top} /> : <EmptySlot />}
       <div className="play-stack__count">{cards.length}</div>

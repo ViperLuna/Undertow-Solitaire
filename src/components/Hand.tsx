@@ -1,26 +1,17 @@
 import { CardFace, EmptySlot } from "./Card";
 import { canPlayCardOnStack } from "../game/engine";
 import type { GameState } from "../game/types";
+import type { PointerEvent as ReactPointerEvent } from "react";
 
 interface HandProps {
   state: GameState;
   selectedHandIndex: number | null;
   draggingHandIndex: number | null;
   stuck: boolean;
-  onSelect: (index: number) => void;
-  onDragStart: (index: number) => void;
-  onDragEnd: () => void;
+  onPointerDownCard: (index: number, event: ReactPointerEvent<HTMLDivElement>) => void;
 }
 
-export function Hand({
-  state,
-  selectedHandIndex,
-  draggingHandIndex,
-  stuck,
-  onSelect,
-  onDragStart,
-  onDragEnd,
-}: HandProps) {
+export function Hand({ state, selectedHandIndex, draggingHandIndex, stuck, onPointerDownCard }: HandProps) {
   return (
     <div className="hand">
       {state.hand.map((card, index) => {
@@ -37,10 +28,8 @@ export function Hand({
             selected={selectedHandIndex === index}
             dragging={draggingHandIndex === index}
             disabled={disabled}
-            draggable={!disabled}
-            onClick={disabled ? undefined : () => onSelect(index)}
-            onDragStart={disabled ? undefined : () => onDragStart(index)}
-            onDragEnd={onDragEnd}
+            interactive={!disabled}
+            onPointerDown={disabled ? undefined : (event) => onPointerDownCard(index, event)}
           />
         );
       })}

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { CardFace } from "./components/Card";
 import { Hand } from "./components/Hand";
 import { PlayStackView } from "./components/PlayStackView";
 import { ReserveStack } from "./components/ReserveStack";
@@ -9,6 +10,7 @@ import { LeaderboardOverlay } from "./components/LeaderboardOverlay";
 import { MainMenu } from "./components/MainMenu";
 import { canPlayCardOnStack } from "./game/engine";
 import { calculateScore, type ScoreBreakdown } from "./game/scoring";
+import { useCardDrag } from "./game/useCardDrag";
 import { useGame } from "./game/useGame";
 import { useLeaderboard } from "./game/useLeaderboard";
 import type { GameState, PlayStackId } from "./game/types";
@@ -38,9 +40,17 @@ function App() {
   const [screen, setScreen] = useState<Screen>("menu");
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showHowToPlay, setShowHowToPlay] = useState(false);
-  const [dragHandIndex, setDragHandIndex] = useState<number | null>(null);
   const [pendingResult, setPendingResult] = useState<PendingResult | null>(null);
   const resolvedStateRef = useRef<GameState | null>(null);
+
+  const { draggingIndex, ghostRef, startDrag } = useCardDrag({
+    onTap: selectHandCard,
+    onDrop: playHandIndexOnStack,
+    canDropOnStack: (handIndex, stackId) => {
+      const card = state.hand[handIndex];
+      return Boolean(card) && canPlayCardOnStack(card!, state, stackId);
+    },
+  });
 
   useEffect(() => {
     if (screen !== "game") return;
@@ -53,7 +63,6 @@ function App() {
   const handlePlay = () => {
     resolvedStateRef.current = null;
     setPendingResult(null);
-    setDragHandIndex(null);
     newGame();
     setScreen("game");
   };
@@ -80,7 +89,7 @@ function App() {
   };
 
   const selectedCard = selectedHandIndex !== null ? state.hand[selectedHandIndex] : null;
-  const draggedCard = dragHandIndex !== null ? state.hand[dragHandIndex] : null;
+  const draggedCard = draggingIndex !== null ? state.hand[draggingIndex] : null;
   const activeCard = draggedCard ?? selectedCard;
   const liveScore = calculateScore(state);
 
@@ -92,12 +101,6 @@ function App() {
     if (selectedCard) {
       playOnStack(stackId);
     }
-  };
-
-  const handleDropOnStack = (stackId: PlayStackId) => {
-    if (dragHandIndex === null) return;
-    playHandIndexOnStack(dragHandIndex, stackId);
-    setDragHandIndex(null);
   };
 
   const leaderboardOverlay = showLeaderboard && (
@@ -169,10 +172,9 @@ function App() {
                 cards={state.playStacks[stackId]}
                 playable={legal}
                 pullTarget={stuck && state.status === "playing"}
-                dragActive={dragHandIndex !== null}
+                dragActive={draggingIndex !== null}
                 dragAcceptable={dragAcceptable}
                 onClick={() => handleStackClick(stackId)}
-                onDropCard={() => handleDropOnStack(stackId)}
               />
             );
           })}
@@ -186,13 +188,17 @@ function App() {
         <Hand
           state={state}
           selectedHandIndex={selectedHandIndex}
-          draggingHandIndex={dragHandIndex}
+          draggingHandIndex={draggingIndex}
           stuck={stuck}
-          onSelect={selectHandCard}
-          onDragStart={setDragHandIndex}
-          onDragEnd={() => setDragHandIndex(null)}
+          onPointerDownCard={startDrag}
         />
       </section>
+
+      {draggingIndex !== null && state.hand[draggingIndex] && (
+        <div ref={ghostRef} className="drag-ghost">
+          <CardFace card={state.hand[draggingIndex]!} />
+        </div>
+      )}
 
       {pendingResult &&
         (qualifies(pendingResult.score.total) ? (

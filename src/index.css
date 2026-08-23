@@ -252,6 +252,7 @@ body {
 
 .card--clickable {
   cursor: pointer;
+  touch-action: none;
 }
 
 .card--clickable:hover {
@@ -272,6 +273,19 @@ body {
 
 .card--dragging {
   opacity: 0.35;
+}
+
+.drag-ghost {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 100;
+  will-change: transform;
+}
+
+.drag-ghost .card {
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.55);
 }
 
 .card--back {

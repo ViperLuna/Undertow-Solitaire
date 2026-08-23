@@ -1,5 +1,6 @@
 import { isRedSuit, rankLabel, suitSymbol } from "../game/deck";
 import type { Card as CardType } from "../game/types";
+import type { PointerEvent as ReactPointerEvent } from "react";
 
 interface CardFaceProps {
   card: CardType;
@@ -7,10 +8,8 @@ interface CardFaceProps {
   selected?: boolean;
   disabled?: boolean;
   dragging?: boolean;
-  draggable?: boolean;
-  onClick?: () => void;
-  onDragStart?: () => void;
-  onDragEnd?: () => void;
+  interactive?: boolean;
+  onPointerDown?: (event: ReactPointerEvent<HTMLDivElement>) => void;
 }
 
 export function CardFace({
@@ -19,10 +18,8 @@ export function CardFace({
   selected,
   disabled,
   dragging,
-  draggable,
-  onClick,
-  onDragStart,
-  onDragEnd,
+  interactive,
+  onPointerDown,
 }: CardFaceProps) {
   const red = isRedSuit(card.suit);
   const classes = [
@@ -32,25 +29,13 @@ export function CardFace({
     selected ? "card--selected" : "",
     disabled ? "card--disabled" : "",
     dragging ? "card--dragging" : "",
-    onClick ? "card--clickable" : "",
+    interactive ? "card--clickable" : "",
   ]
     .filter(Boolean)
     .join(" ");
 
   return (
-    <div
-      className={classes}
-      onClick={onClick}
-      draggable={draggable}
-      onDragStart={(event) => {
-        if (event.dataTransfer) {
-          event.dataTransfer.setData("text/plain", card.id);
-          event.dataTransfer.effectAllowed = "move";
-        }
-        onDragStart?.();
-      }}
-      onDragEnd={onDragEnd}
-    >
+    <div className={classes} onPointerDown={onPointerDown}>
       <span className="card__corner card__corner--top">
         {rankLabel(card.rank)}
         <br />
